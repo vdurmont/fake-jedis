@@ -27,6 +27,8 @@ jedis.lpush("my_key", "my_value");
 Long len = jedis.llen("my_key");
 ```
 
+Do not hesitate to take a look at the [Jedis documentation](https://github.com/xetorthio/jedis/wiki) and/or the [Redis documentation](http://redis.io/commands).
+
 ## Supported commands
 
 ### FakeJedis class (extends redis.clients.jedis.Jedis)

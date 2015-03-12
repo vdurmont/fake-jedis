@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Transaction wrapper that enables us to simulate redis transactions
+ *
+ * @author Vincent DURMONT [vdurmont@gmail.com]
+ */
 public class FakeTransaction extends Transaction {
     private final FakeJedis jedis;
     private final List<Action> actions;

@@ -31,6 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Jedis wrapper that simulates the behaviour of redis
+ *
+ * @author Vincent DURMONT [vdurmont@gmail.com]
+ */
 public class FakeJedis extends Jedis {
     protected final Object LOCK;
     private boolean isMulti;
