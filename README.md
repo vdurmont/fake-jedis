@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/vdurmont/fake-jedis.svg?branch=master)](https://travis-ci.org/vdurmont/fake-jedis)
 [![License Info](http://img.shields.io/badge/license-The%20MIT%20License-brightgreen.svg)](https://github.com/vdurmont/fake-jedis/blob/master/LICENSE.md)
 
-Simple Java library that **mimics** the behavior of a [redis](http://redios.io) server wrapped into a [Jedis](https://github.com/xetorthio/jedis) instance. Its purpose is to test *algorithms* involving the use of a redis database without starting an instance.
+Simple Java library that **mimics** the behavior of a [redis](http://redis.io) server wrapped into a [Jedis](https://github.com/xetorthio/jedis) instance. Its purpose is to test *algorithms* involving the use of a redis database without starting an instance.
 
 ***Important note:*** You should NEVER use fake-jedis in a production or a performance testing context. It is designed to test your algorithms but won't behave as a real redis instance when you'll test concurrency, load, persistence, etc.
 
