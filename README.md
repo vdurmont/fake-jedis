@@ -1,0 +1,68 @@
+# Fake-Jedis
+
+Simple Java library that **mimics** the behavior of a [redis](http://redios.io) server wrapped into a [Jedis](https://github.com/xetorthio/jedis) instance. Its purpose is to test *algorithms* involving the use of a redis database without starting an instance.
+
+***Important note:*** You should NEVER use fake-jedis in a production or a performance testing context. It is designed to test your algorithms but won't behave as a real redis instance when you'll test concurrency, load, persistence, etc.
+
+## Installation
+
+Add the dependency to your maven project (or checkout the project and compile the jar).
+
+```xml
+<dependency>
+  <groupId>com.vdurmont</groupId>
+  <artifactId>fake-jedis</artifactId>
+  <version>0.1.0</version>
+  <scope>test</scope> <!-- You should not use Fake-Jedis if it is not a test! -->
+<dependency>
+```
+
+## Usage
+
+Simply instantiate a `FakeJedis` and use it as a regular `Jedis` client.
+```java
+Jedis jedis = new FakeJedis();
+// Use your client
+jedis.lpush("my_key", "my_value");
+Long len = jedis.llen("my_key");
+```
+
+## Supported commands
+
+### FakeJedis class (extends redis.clients.jedis.Jedis)
+
+* `void close()`
+* `Long del(String)`
+* `Long del(String...)`
+* `Boolean exists(String)`
+* `String get(String)`
+* `String hget(String,String)`
+* `Map<String,String> hgetAll(String)`
+* `Long hincrBy(String,String,long)`
+* `Long hset(String,String,String)`
+* `Set<String> keys(String)`
+* `Long llen(String)`
+* `String lpop(String)`
+* `Long lpush(String,String...)`
+* `List<String> lpush(String,long,long)`
+* `Transaction multi()` (returns an instance of `FakeTransaction`)
+* `String set(String,String)`
+* `Long setnx(String,String)`
+
+### FakeTransaction class (extends redis.clients.jedis.Transaction)
+
+* `List<Object> exec()`
+* `Response<Long> del(String)`
+* `Response<Long> del(String...)`
+* `Response<Long> hincrBy(String,String,long)`
+* `Response<String> lpop(String)`
+* `Response<Long> lpush(String,String...)`
+* `Response<String> set(String,String)`
+
+## License
+
+See [LICENSE.md](./LICENSE.md)
+
+## Contributing
+
+Pull requests are welcome if you find a bug or if you want to implement a new method! Please provide tests ;)
