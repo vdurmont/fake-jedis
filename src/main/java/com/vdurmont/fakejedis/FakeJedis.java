@@ -298,6 +298,14 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    @Override public Boolean sismember(String key, String member) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            return jedisSet.set.contains(member);
+        }
+    }
+
     @Override public Long srem(String key, String... members) {
         synchronized (this.LOCK) {
             checkMulti();
@@ -581,10 +589,6 @@ public class FakeJedis extends Jedis {
     }
 
     @Override public Long scard(String key) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Boolean sismember(String key, String member) {
         throw new FakeJedisNotImplementedException();
     }
 

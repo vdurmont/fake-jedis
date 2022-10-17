@@ -50,6 +50,7 @@ Do not hesitate to take a look at the [Jedis documentation](https://github.com/x
 * `Set<String> keys(String)`
 * `Long sadd(String key, String... members)`
 * `Set<String> smembers(String key)`
+* `Boolean sismember(String key, String member)`
 * `Long srem(String key, String... members)`
 * `Long llen(String)`
 * `String lpop(String)`

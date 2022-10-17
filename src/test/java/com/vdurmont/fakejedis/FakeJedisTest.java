@@ -585,6 +585,27 @@ public class FakeJedisTest {
         assertTrue(members.isEmpty());
     }
 
+    @Test public void sismember_when_not_in_set() {
+        // GIVEN
+
+        // WHEN
+        boolean result = this.jedis.sismember(KEY, VALUE);
+
+        // THEN
+        assertFalse(result);
+    }
+
+    @Test public void sismember_when_in_set() {
+        // GIVEN
+        this.jedis.sadd(KEY, VALUE);
+
+        // WHEN
+        boolean result = this.jedis.sismember(KEY, VALUE);
+
+        // THEN
+        assertTrue(result);
+    }
+
     @Test public void call_a_method_that_is_not_implemented() {
         // GIVEN
 
