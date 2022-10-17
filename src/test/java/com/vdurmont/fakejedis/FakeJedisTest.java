@@ -19,9 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class FakeJedisTest {
@@ -94,6 +92,27 @@ public class FakeJedisTest {
         assertEquals(0, result);
     }
 
+    @Test public void hdel_if_removed_returns_1() {
+        // GIVEN
+        this.jedis.hset(KEY, FIELD, VALUE);
+
+        // WHEN
+        final long result = this.jedis.hdel(KEY, FIELD, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+    }
+
+    @Test public void hdel_if_not_found_returns_0() {
+        // GIVEN
+
+        // WHEN
+        final long result = this.jedis.hdel(KEY, FIELD, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+    }
+
     @Test public void hset_and_hget() {
         // GIVEN
 
@@ -103,6 +122,18 @@ public class FakeJedisTest {
 
         // THEN
         assertEquals(VALUE, result);
+    }
+
+    @Test public void hdel_removes_value() {
+        // GIVEN
+        this.jedis.hset(KEY, FIELD, VALUE);
+
+        // WHEN
+        this.jedis.hdel(KEY, FIELD);
+        String result = this.jedis.hget(KEY, FIELD);
+
+        // THEN
+        assertNull(result);
     }
 
     @Test public void hset_replaces_the_old_value() {

@@ -203,6 +203,23 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    @Override public Long hdel(String key, String... fields) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisHash jedisHash = this.getOrCreate(JedisObjectType.HASH, key);
+
+            long removed = 0;
+
+            for (String field : fields) {
+                if (jedisHash.hash.remove(field) != null) {
+                    removed++;
+                }
+            }
+
+            return removed;
+        }
+    }
+
     @Override public String hget(String key, String field) {
         synchronized (this.LOCK) {
             checkMulti();
@@ -502,10 +519,6 @@ public class FakeJedis extends Jedis {
     }
 
     @Override public Boolean hexists(String key, String field) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Long hdel(String key, String... fields) {
         throw new FakeJedisNotImplementedException();
     }
 

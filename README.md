@@ -44,6 +44,7 @@ Do not hesitate to take a look at the [Jedis documentation](https://github.com/x
 * `Map<String,String> hgetAll(String)`
 * `Long hincrBy(String,String,long)`
 * `Long hset(String,String,String)`
+* `Long hdel(String key, String... fields)`
 * `Set<String> keys(String)`
 * `Long sadd(String key, String... members)`
 * `Set<String> smembers(String key)`
