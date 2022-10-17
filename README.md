@@ -45,6 +45,9 @@ Do not hesitate to take a look at the [Jedis documentation](https://github.com/x
 * `Long hincrBy(String,String,long)`
 * `Long hset(String,String,String)`
 * `Set<String> keys(String)`
+* `Long sadd(String key, String... members)`
+* `Set<String> smembers(String key)`
+* `Long srem(String key, String... members)`
 * `Long llen(String)`
 * `String lpop(String)`
 * `Long lpush(String,String...)`
