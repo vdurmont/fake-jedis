@@ -1574,10 +1574,6 @@ public class FakeJedis extends Jedis {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override protected void checkIsInMulti() {
-        throw new FakeJedisNotImplementedException();
-    }
-
     @Override public void connect() {
         throw new FakeJedisNotImplementedException();
     }
