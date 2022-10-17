@@ -393,6 +393,29 @@ public class FakeJedisTest {
         assertEquals(1, result);
     }
 
+    @Test public void unlink_unknown_key_returns_0() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.unlink(KEY);
+
+        // THEN
+        assertFalse(this.jedis.exists(KEY));
+        assertEquals(0, result);
+    }
+
+    @Test public void unlink_removes_the_key() {
+        // GIVEN
+        this.jedis.lpush(KEY, VALUE);
+
+        // WHEN
+        long result = this.jedis.unlink(KEY);
+
+        // THEN
+        assertFalse(this.jedis.exists(KEY));
+        assertEquals(1, result);
+    }
+
     @Test public void set_defines_the_value() {
         // GIVEN
 

@@ -38,6 +38,8 @@ Do not hesitate to take a look at the [Jedis documentation](https://github.com/x
 * `void close()`
 * `Long del(String)`
 * `Long del(String...)`
+* `Long unlink(String key)`
+* `Long unlink(String... keys)`
 * `Boolean exists(String)`
 * `String get(String)`
 * `String hget(String,String)`

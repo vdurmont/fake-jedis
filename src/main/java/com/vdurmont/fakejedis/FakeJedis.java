@@ -79,6 +79,16 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    @Override
+    public Long unlink(String... keys) {
+        return this.del(keys);
+    }
+
+    @Override
+    public Long unlink(String key) {
+        return unlink(new String[]{key});
+    }
+
     @Override public String set(String key, String value) {
         synchronized (this.LOCK) {
             checkMulti();
