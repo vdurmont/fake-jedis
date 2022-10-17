@@ -23,13 +23,7 @@ import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.util.Pool;
 import redis.clients.util.Slowlog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Jedis wrapper that simulates the behaviour of redis
@@ -251,6 +245,48 @@ public class FakeJedis extends Jedis {
     }
 
     // //////////////////////
+    // PUBLIC API — SETS
+    // //////////////
+
+    @Override public Long sadd(String key, String... members) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            long added = 0;
+            for (String value : members) {
+                if (jedisSet.set.add(value)) {
+                    added++;
+                }
+            }
+
+            return added;
+        }
+    }
+
+    @Override public Set<String> smembers(String key) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            return jedisSet.set;
+        }
+    }
+
+    @Override public Long srem(String key, String... members) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            long removed = 0;
+            for (String value : members) {
+                if (jedisSet.set.remove(value)) {
+                    removed++;
+                }
+            }
+
+            return removed;
+        }
+    }
+
+    // //////////////////////
     // PRIVATE TOOLS
     // //////////////
 
@@ -320,6 +356,15 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    private static class JedisSet extends JedisObject {
+        public final Set<String> set;
+
+        public JedisSet() {
+            super(JedisObjectType.SET);
+            this.set = new HashSet<>();
+        }
+    }
+
     private static class JedisString extends JedisObject {
         public final String value;
 
@@ -332,6 +377,7 @@ public class FakeJedis extends Jedis {
     private static enum JedisObjectType {
         LIST(JedisList.class),
         HASH(JedisHash.class),
+        SET(JedisSet.class),
         STRING(JedisString.class);
 
         private final Class cls;
@@ -500,18 +546,6 @@ public class FakeJedis extends Jedis {
     }
 
     @Override public String rpoplpush(String srckey, String dstkey) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Long sadd(String key, String... members) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Set<String> smembers(String key) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Long srem(String key, String... members) {
         throw new FakeJedisNotImplementedException();
     }
 

@@ -475,6 +475,62 @@ public class FakeJedisTest {
         assertEquals(VALUE, this.jedis.get(KEY));
     }
 
+    // ---------
+
+    @Test public void sadd_if_doesnt_exist() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.sadd(KEY, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertEquals(1, members.size());
+        assertTrue(members.contains(VALUE));
+    }
+
+    @Test public void sadd_if_it_exists() {
+        // GIVEN
+
+        // WHEN
+        this.jedis.sadd(KEY, VALUE);
+        long result = this.jedis.sadd(KEY, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertEquals(1, members.size());
+        assertTrue(members.contains(VALUE));
+    }
+
+    @Test public void srem_if_it_exists() {
+        // GIVEN
+
+        // WHEN
+        this.jedis.sadd(KEY, VALUE);
+        long result = this.jedis.srem(KEY, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertTrue(members.isEmpty());
+    }
+
+    @Test public void srem_if_it_doesnt_exist() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.srem(KEY, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertTrue(members.isEmpty());
+    }
+
     @Test public void call_a_method_that_is_not_implemented() {
         // GIVEN
 
