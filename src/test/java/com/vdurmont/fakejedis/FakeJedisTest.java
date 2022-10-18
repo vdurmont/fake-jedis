@@ -19,9 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class FakeJedisTest {
@@ -94,6 +92,27 @@ public class FakeJedisTest {
         assertEquals(0, result);
     }
 
+    @Test public void hdel_if_removed_returns_1() {
+        // GIVEN
+        this.jedis.hset(KEY, FIELD, VALUE);
+
+        // WHEN
+        final long result = this.jedis.hdel(KEY, FIELD, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+    }
+
+    @Test public void hdel_if_not_found_returns_0() {
+        // GIVEN
+
+        // WHEN
+        final long result = this.jedis.hdel(KEY, FIELD, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+    }
+
     @Test public void hset_and_hget() {
         // GIVEN
 
@@ -103,6 +122,18 @@ public class FakeJedisTest {
 
         // THEN
         assertEquals(VALUE, result);
+    }
+
+    @Test public void hdel_removes_value() {
+        // GIVEN
+        this.jedis.hset(KEY, FIELD, VALUE);
+
+        // WHEN
+        this.jedis.hdel(KEY, FIELD);
+        String result = this.jedis.hget(KEY, FIELD);
+
+        // THEN
+        assertNull(result);
     }
 
     @Test public void hset_replaces_the_old_value() {
@@ -362,6 +393,29 @@ public class FakeJedisTest {
         assertEquals(1, result);
     }
 
+    @Test public void unlink_unknown_key_returns_0() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.unlink(KEY);
+
+        // THEN
+        assertFalse(this.jedis.exists(KEY));
+        assertEquals(0, result);
+    }
+
+    @Test public void unlink_removes_the_key() {
+        // GIVEN
+        this.jedis.lpush(KEY, VALUE);
+
+        // WHEN
+        long result = this.jedis.unlink(KEY);
+
+        // THEN
+        assertFalse(this.jedis.exists(KEY));
+        assertEquals(1, result);
+    }
+
     @Test public void set_defines_the_value() {
         // GIVEN
 
@@ -473,6 +527,83 @@ public class FakeJedisTest {
         // THEN
         assertEquals(1, result);
         assertEquals(VALUE, this.jedis.get(KEY));
+    }
+
+    // ---------
+
+    @Test public void sadd_if_doesnt_exist() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.sadd(KEY, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertEquals(1, members.size());
+        assertTrue(members.contains(VALUE));
+    }
+
+    @Test public void sadd_if_it_exists() {
+        // GIVEN
+
+        // WHEN
+        this.jedis.sadd(KEY, VALUE);
+        long result = this.jedis.sadd(KEY, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertEquals(1, members.size());
+        assertTrue(members.contains(VALUE));
+    }
+
+    @Test public void srem_if_it_exists() {
+        // GIVEN
+
+        // WHEN
+        this.jedis.sadd(KEY, VALUE);
+        long result = this.jedis.srem(KEY, VALUE);
+
+        // THEN
+        assertEquals(1, result);
+
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertTrue(members.isEmpty());
+    }
+
+    @Test public void srem_if_it_doesnt_exist() {
+        // GIVEN
+
+        // WHEN
+        long result = this.jedis.srem(KEY, VALUE);
+
+        // THEN
+        assertEquals(0, result);
+
+        final Set<String> members = this.jedis.smembers(KEY);
+        assertTrue(members.isEmpty());
+    }
+
+    @Test public void sismember_when_not_in_set() {
+        // GIVEN
+
+        // WHEN
+        boolean result = this.jedis.sismember(KEY, VALUE);
+
+        // THEN
+        assertFalse(result);
+    }
+
+    @Test public void sismember_when_in_set() {
+        // GIVEN
+        this.jedis.sadd(KEY, VALUE);
+
+        // WHEN
+        boolean result = this.jedis.sismember(KEY, VALUE);
+
+        // THEN
+        assertTrue(result);
     }
 
     @Test public void call_a_method_that_is_not_implemented() {

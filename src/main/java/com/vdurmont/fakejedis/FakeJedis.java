@@ -23,13 +23,7 @@ import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.util.Pool;
 import redis.clients.util.Slowlog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Jedis wrapper that simulates the behaviour of redis
@@ -83,6 +77,16 @@ public class FakeJedis extends Jedis {
             JedisObject old = this.database.remove(key);
             return (long) (old == null ? 0 : 1);
         }
+    }
+
+    @Override
+    public Long unlink(String... keys) {
+        return this.del(keys);
+    }
+
+    @Override
+    public Long unlink(String key) {
+        return unlink(new String[]{key});
     }
 
     @Override public String set(String key, String value) {
@@ -209,6 +213,23 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    @Override public Long hdel(String key, String... fields) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisHash jedisHash = this.getOrCreate(JedisObjectType.HASH, key);
+
+            long removed = 0;
+
+            for (String field : fields) {
+                if (jedisHash.hash.remove(field) != null) {
+                    removed++;
+                }
+            }
+
+            return removed;
+        }
+    }
+
     @Override public String hget(String key, String field) {
         synchronized (this.LOCK) {
             checkMulti();
@@ -247,6 +268,56 @@ public class FakeJedis extends Jedis {
                 map.putAll(hash.hash);
             }
             return map;
+        }
+    }
+
+    // //////////////////////
+    // PUBLIC API — SETS
+    // //////////////
+
+    @Override public Long sadd(String key, String... members) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            long added = 0;
+            for (String value : members) {
+                if (jedisSet.set.add(value)) {
+                    added++;
+                }
+            }
+
+            return added;
+        }
+    }
+
+    @Override public Set<String> smembers(String key) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            return jedisSet.set;
+        }
+    }
+
+    @Override public Boolean sismember(String key, String member) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            return jedisSet.set.contains(member);
+        }
+    }
+
+    @Override public Long srem(String key, String... members) {
+        synchronized (this.LOCK) {
+            checkMulti();
+            JedisSet jedisSet = this.getOrCreate(JedisObjectType.SET, key);
+            long removed = 0;
+            for (String value : members) {
+                if (jedisSet.set.remove(value)) {
+                    removed++;
+                }
+            }
+
+            return removed;
         }
     }
 
@@ -320,6 +391,15 @@ public class FakeJedis extends Jedis {
         }
     }
 
+    private static class JedisSet extends JedisObject {
+        public final Set<String> set;
+
+        public JedisSet() {
+            super(JedisObjectType.SET);
+            this.set = new HashSet<>();
+        }
+    }
+
     private static class JedisString extends JedisObject {
         public final String value;
 
@@ -332,6 +412,7 @@ public class FakeJedis extends Jedis {
     private static enum JedisObjectType {
         LIST(JedisList.class),
         HASH(JedisHash.class),
+        SET(JedisSet.class),
         STRING(JedisString.class);
 
         private final Class cls;
@@ -459,10 +540,6 @@ public class FakeJedis extends Jedis {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Long hdel(String key, String... fields) {
-        throw new FakeJedisNotImplementedException();
-    }
-
     @Override public Long hlen(String key) {
         throw new FakeJedisNotImplementedException();
     }
@@ -503,18 +580,6 @@ public class FakeJedis extends Jedis {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Long sadd(String key, String... members) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Set<String> smembers(String key) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Long srem(String key, String... members) {
-        throw new FakeJedisNotImplementedException();
-    }
-
     @Override public String spop(String key) {
         throw new FakeJedisNotImplementedException();
     }
@@ -524,10 +589,6 @@ public class FakeJedis extends Jedis {
     }
 
     @Override public Long scard(String key) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override public Boolean sismember(String key, String member) {
         throw new FakeJedisNotImplementedException();
     }
 
@@ -1524,10 +1585,6 @@ public class FakeJedis extends Jedis {
     }
 
     @Override public List<Object> multi(TransactionBlock jedisTransaction) {
-        throw new FakeJedisNotImplementedException();
-    }
-
-    @Override protected void checkIsInMulti() {
         throw new FakeJedisNotImplementedException();
     }
 

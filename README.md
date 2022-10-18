@@ -38,13 +38,20 @@ Do not hesitate to take a look at the [Jedis documentation](https://github.com/x
 * `void close()`
 * `Long del(String)`
 * `Long del(String...)`
+* `Long unlink(String key)`
+* `Long unlink(String... keys)`
 * `Boolean exists(String)`
 * `String get(String)`
 * `String hget(String,String)`
 * `Map<String,String> hgetAll(String)`
 * `Long hincrBy(String,String,long)`
 * `Long hset(String,String,String)`
+* `Long hdel(String key, String... fields)`
 * `Set<String> keys(String)`
+* `Long sadd(String key, String... members)`
+* `Set<String> smembers(String key)`
+* `Boolean sismember(String key, String member)`
+* `Long srem(String key, String... members)`
 * `Long llen(String)`
 * `String lpop(String)`
 * `Long lpush(String,String...)`

@@ -369,7 +369,7 @@ public class FakeTransaction extends Transaction {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> configGet(String pattern) {
+    @Override public Response<List<String>> configGet(String pattern) {
         throw new FakeJedisNotImplementedException();
     }
 
@@ -1449,27 +1449,27 @@ public class FakeTransaction extends Transaction {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> eval(String script) {
+    @Override public Response<Object> eval(String script) {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> eval(String script, List<String> keys, List<String> args) {
+    @Override public Response<Object> eval(String script, List<String> keys, List<String> args) {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> eval(String script, int numKeys, String... args) {
+    @Override public Response<Object> eval(String script, int numKeys, String... args) {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> evalsha(String script) {
+    @Override public Response<Object> evalsha(String script) {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> evalsha(String sha1, List<String> keys, List<String> args) {
+    @Override public Response<Object> evalsha(String sha1, List<String> keys, List<String> args) {
         throw new FakeJedisNotImplementedException();
     }
 
-    @Override public Response<String> evalsha(String sha1, int numKeys, String... args) {
+    @Override public Response<Object> evalsha(String sha1, int numKeys, String... args) {
         throw new FakeJedisNotImplementedException();
     }
 
